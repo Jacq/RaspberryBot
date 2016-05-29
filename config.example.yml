@@ -1,0 +1,20 @@
+log_path: '/var/log/sensorsbot.log'
+bot_token: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' # fill Telegram Bot Token given by BotFather https://web.telegram.org/#/im?p=@BotFather
+admin_cid: XXXXXXXX # fill admin id for advanced commands https://web.telegram.org/#/im?p=@myidbot
+rrd:
+  path:  "/var/lib/rpimonitor/stat/" # path to graph.rrd file
+  temp_file: "living_room_temp.rrd" # temperature rrd file name in path
+  humidity_file: "humidity.rrd" # humidity rrd file name in path
+pir:
+  pin: 18 # fill PIR sensor GPIO
+snd:
+  pin: 17 # fill SOUND sensor GPIO
+dht:
+  pin: 11 # fill DHT sensor GPIO
+  sensor: 11 # fill DHT sensor model for Adafruit_DHT 11 or 22
+nas:
+  mac: "xx-xx-xx-xx-xx-xx" # fill nas server mac with WOL enabled to activate by command
+tv:
+  ip: '192.168.1.1' # fill tv ip to poweroff
+  mac: 'xx-xx-xx-xx-xx-xx' # fill tv mac
+  model: 'UN50D8000' # fill tv model
