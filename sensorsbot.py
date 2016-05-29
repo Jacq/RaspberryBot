@@ -42,8 +42,9 @@ class BotSubscribers:
                 bot.send_message(cid, message)
                 #os.system('./pushbullet.sh '+message)
 
-
-config = load(open('config.yml'))
+root_dir = os.path.abspath(os.path.dirname(__file__))
+yaml_path = os.path.join(root_dir, 'config.yml')
+config = load(open(yaml_path))
 admin_cid = config['admin_cid']
 bot = telebot.TeleBot(config['bot_token'])
 
