@@ -52,7 +52,7 @@ telebot.logger.setLevel(logging.WARNING) # Outputs debug messages to console.
 logging.getLogger('urllib3').setLevel(logging.WARNING) #hide urllib3 messages
 
 #############################################
-#Funciones
+#Bot commands
 @bot.message_handler(commands=['help','start'])
 def command_ayuda(m):
     bot.reply_to(m, "Comandos Disponibles: \n"+help)
@@ -220,29 +220,27 @@ time.sleep(2)
 logging.info("Ready")
 
 #############################################
-#Listener
-def listener(messages): # Con esto, estamos definiendo una función llamada 'listener', que recibe como parámetro un dato llamado 'messages'.
-    for m in messages: # Por cada dato 'm' en el dato 'messages'
-        cid = m.chat.id # Almacenaremos el ID de la conversación.
+#Listener: update listener to log commands
+def listener(messages):
+    for m in messages:
+        cid = m.chat.id
         if m.content_type == 'text':
             log_msg = "[" + str(cid) + "] " + str(m.from_user) + ": " + m.text
             logging.info(log_msg)
             bot.send_message(admin_cid,log_msg)
 
-bot.set_update_listener(listener) # Así, le decimos al bot que utilice como función escuchadora nuestra función 'listener' declarada arriba.
-
+bot.set_update_listener(listener) #
 #############################################
-#Peticiones
+#Main bot loog
 while 1:
-    #try:
+    try:
         bot_helper.run()
         bot.send_message(admin_cid,"Bot started")
-        bot.polling(none_stop=True) # Con esto, le decimos al bot que siga funcionando incluso si encuentra algun fallo.
-        '''
-        except Exception as e:
+        bot.polling(none_stop=True) # continue running on errors
+    except Exception as e:
         logging.error(e)
         logging.warning("Restarting bot due to error: " + str(e))
         time.sleep(5)
-        '''
 
+# TODO proper end for the bot? or not end at all?
 logging.info("Quit")
