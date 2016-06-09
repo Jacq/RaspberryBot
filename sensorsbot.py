@@ -51,6 +51,8 @@ bot = telebot.TeleBot(config['bot_token'])
 telebot.logger.setLevel(logging.ERROR)
 telebot.logger.setLevel(logging.WARNING) # Outputs debug messages to console.
 logging.getLogger('urllib3').setLevel(logging.WARNING) #hide urllib3 messages
+logging.getLogger('requests.packages.urllib3.connectionpool').setLevel(logging.WARNING) #hide urllib3 messages
+
 
 #############################################
 #Bot commands
@@ -114,9 +116,9 @@ def bounce_time_response(msg ,index):
        bot.reply_to(msg,"Bouncetime must be integer")
 
     if temp >= 1 and temp <= 60:
+       logging.info("Updating bounce time: " + str(temp))
        bouncetime = temp * 1000
-       bot_helper.stop()
-       bot_helper.run(bouncetime)
+       my_sensors.update_bouncetime(bouncetime);
        markup = types.ReplyKeyboardHide(selective=False)
        bot.reply_to(msg,"Bouncetime updated at bouncetime "+str(bouncetime)+" ms, restarting", reply_markup=markup)
        bot.send_message(admin_cid,"Motion/Sound detector restarted")
@@ -238,9 +240,13 @@ while 1:
         bot_helper.run()
         bot.send_message(admin_cid,"Bot started")
         bot.polling(none_stop=True) # continue running on errors
+    except KeyboardInterrupt:
+        break;
     except Exception as e:
         logging.error(e)
-        logging.warning("Restarting bot due to error: " + str(e))
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        logging.error("Restarting bot due to error: {} {} {} {}".format(str(e),exc_type, fname, exc_tb.tb_lineno))
         time.sleep(5)
 
 # TODO proper end for the bot? or not end at all?

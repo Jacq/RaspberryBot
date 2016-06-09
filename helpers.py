@@ -57,9 +57,9 @@ class BotHelper:
                 self.mpd_event(result);
         logging.info("===Ending thread for mpd status listener===\n")
 
-    def run(self, bouncetime=60000):
+    def run(self):
         if not self.started:
-            self.sensors.detect_all(True,bouncetime)
+            self.sensors.detect_all(True)
             self.worker_thread_mpd = threading.Thread(target=self.mpd_worker)
             self.worker_thread_mpd.start()
             self.started = True

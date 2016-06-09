@@ -1,0 +1,5 @@
+pyTelegramBotAPI>=2.0.0
+PyYAML>=3.0.0
+python-rrdtool>=1.4.7
+python-mpd2>=0.5.5
+wakeonlan>=0.2.2
