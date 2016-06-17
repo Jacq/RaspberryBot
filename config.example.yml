@@ -1,6 +1,8 @@
 log_path: '/var/log/sensorsbot.log'
 bot_token: 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX' # fill Telegram Bot Token given by BotFather https://web.telegram.org/#/im?p=@BotFather
 admin_cid: XXXXXXXX # fill admin id for advanced commands https://web.telegram.org/#/im?p=@myidbot
+hub_ctrl:
+  path: ""
 rrd:
   path:  "/var/lib/rpimonitor/stat/" # path to graph.rrd file
   temp_file: "living_room_temp.rrd" # temperature rrd file name in path

@@ -110,6 +110,7 @@ def bounce_time_response_step(msg):
     bounce_time_response(msg,0)
 
 def bounce_time_response(msg ,index):
+    temp = 0
     try:
        temp = int(msg.text.split()[index])
     except:
@@ -199,7 +200,7 @@ def mpd_event(result):
 
 subscribers = BotSubscribers(bot,[admin_cid])
 my_sensors = Sensors(config['snd']['pin'],config['pir']['pin'],config['dht']['pin'],config['dht']['sensor'], subscribers.sound_event, subscribers.motion_event)
-bot_helper = BotHelper(my_sensors, config['rrd'],config['log_path'],mpd_event)
+bot_helper = BotHelper(my_sensors, config['rrd'],config['log_path'],mpd_event,config['hub_ctrl'])
 
 help = """/help
 /temp - get temp and humidity
@@ -249,5 +250,7 @@ while 1:
         logging.error("Restarting bot due to error: {} {} {} {}".format(str(e),exc_type, fname, exc_tb.tb_lineno))
         time.sleep(5)
 
+
 # TODO proper end for the bot? or not end at all?
+bot_helper.stop();
 logging.info("Quit")

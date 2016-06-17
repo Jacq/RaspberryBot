@@ -7,12 +7,13 @@ import remote # samsung remote
 from subprocess import call
 
 class BotHelper:
-    def __init__(self, sensors, rrd, log_path,mpd_event,mpd_host='localhost',mpd_port='6600'):
+    def __init__(self, sensors, rrd, log_path,mpd_event,hub_ctrl = None, mpd_host='localhost',mpd_port='6600'):
         self.sensors = sensors
         self.worker_thread_mpd = None
         self.running_thread = False
         self.started = False
         self.rrd = rrd
+        self.hub_ctrl = hub_ctrl
         self.mpd_event = mpd_event
         self.mpd_client = MPDClient()               # create client object
         self.mpd_client.timeout = 10                # network timeout in seconds (floats allowed), default: None
@@ -45,14 +46,49 @@ class BotHelper:
     def mpd_worker(self):
         self.running_thread = True
         logging.info("===Starting thread for mpd status listener===")
+        last_state = None
+        self.off = False
+        self.just_off = False
         while self.running_thread:
             self.mpd_client.idle()
             logging.info("===Waiting thread mpd status===")
             status = self.mpd_client.status()
             logging.info("===Status event in thread mpd===")
             state = status['state']
-            logging.info("Music change state: "+str(state))
-            result = self.sensors.detect_sound(state!='play')
+
+            print str(status)
+            logging.info("Music change state: "+str(status['state']) + " last state: "+str(last_state))
+            result = self.sensors.active_sound_detector
+
+            if state =='play' and last_state!='play' and last_state!=None:
+                result = self.sensors.detect_sound(True)
+
+            if state =='stop' and last_state!='stop' and last_state!=None:
+                result = self.sensors.detect_sound(False)
+                # usb ports off (audio usb)
+                if self.hub_ctrl != None:
+                    self.mpd_client.disableoutput(0)
+                    time.sleep(2)
+                    self.power_off_usbs();
+                    logging.info("Power off usbs")
+                    self.off=True
+                    # since we disabled output mpd_cliend.idle will issue new event with status stop again
+                    self.just_off = True
+
+            # usb ports on (audio usb)
+            if state =='stop' and last_state=='stop':
+                if self.just_off:
+                    # just power off consuming dsiableoutput event
+                    self.just_off = False;
+                elif self.off and self.hub_ctrl != None:
+                    # if this is a play command it will not work since power is off but will poweron usb for next command 
+                    self.power_on_usbs();
+                    logging.info("Power on usbs")
+                    self.off = False
+                    time.sleep(2)
+                    self.mpd_client.enableoutput(0)
+
+            last_state = state
             if hasattr(self,'mpd_event'):
                 self.mpd_event(result);
         logging.info("===Ending thread for mpd status listener===\n")
@@ -105,6 +141,12 @@ class BotHelper:
 
     def reboot_self(self):
         call("sudo reboot", shell=True)
+
+    def power_on_usbs(self):
+        call(self.hub_ctrl['path']+"hub-ctrl -h 0 -P 2 -p 1", shell=True)
+
+    def power_off_usbs(self):
+        call(self.hub_ctrl['path']+"hub-ctrl -h 0 -P 2 -p 0", shell=True)
 
     def power_samsung_tv(self, tv):
         try:

@@ -23,7 +23,7 @@ class Sensors:
 
     def update_bouncetime(self, bouncetime):
         self.bouncetime = bouncetime
-        self.detect_all(False) 
+        self.detect_all(False)
         self.detect_all(True)
 
     def detect_all(self, active):
@@ -33,7 +33,7 @@ class Sensors:
     def detect_sound(self, active=True):
         logging.info("Detecting sound: "+str(active))
         if active and not self.active_sound_detector:
-            print "detect" + str(self.bouncetime)
+            #print "detect" + str(self.bouncetime)
             GPIO.add_event_detect(self.snd_pin, GPIO.FALLING, callback=self.sound_callback, bouncetime=self.bouncetime)
             self.active_sound_detector = True
         elif not active and self.active_sound_detector:
