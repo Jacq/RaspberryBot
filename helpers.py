@@ -81,7 +81,7 @@ class BotHelper:
                     # just power off consuming dsiableoutput event
                     self.just_off = False;
                 elif self.off and self.hub_ctrl != None:
-                    # if this is a play command it will not work since power is off but will poweron usb for next command 
+                    # if this is a play command it will not work since power is off but will poweron usb for next command
                     self.power_on_usbs();
                     logging.info("Power on usbs")
                     self.off = False
@@ -143,10 +143,12 @@ class BotHelper:
         call("sudo reboot", shell=True)
 
     def power_on_usbs(self):
-        call(self.hub_ctrl['path']+"hub-ctrl -h 0 -P 2 -p 1", shell=True)
+        #call(self.hub_ctrl['path']+"hub-ctrl -h 0 -P 2 -p 1", shell=True)
+        pass
 
     def power_off_usbs(self):
-        call(self.hub_ctrl['path']+"hub-ctrl -h 0 -P 2 -p 0", shell=True)
+        #call(self.hub_ctrl['path']+"hub-ctrl -h 0 -P 2 -p 0", shell=True)
+        pass
 
     def power_samsung_tv(self, tv):
         try:

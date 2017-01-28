@@ -238,7 +238,9 @@ bot.set_update_listener(listener) #
 #Main bot loog
 while 1:
     try:
-        bot_helper.run()
+        if config['events']!='false':
+            bot_helper.run()
+            logging.info("Running bot helpeter with events")
         bot.send_message(admin_cid,"Bot started")
         bot.polling(none_stop=True) # continue running on errors
     except KeyboardInterrupt:
@@ -252,5 +254,6 @@ while 1:
 
 
 # TODO proper end for the bot? or not end at all?
-bot_helper.stop();
+if config['events']:
+    bot_helper.stop();
 logging.info("Quit")
